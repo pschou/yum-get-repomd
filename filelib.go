@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Written by Paul Schou (paulschou.com) March 2022
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START functions_helloworld_get]
-
-// Package helloworld provides a set of Cloud Functions samples.
 package main
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -51,7 +50,7 @@ func readMirrors(mirrorFile string) []string {
 }
 
 func ensureDir(dirName string) error {
-	err := os.Mkdir(dirName, os.ModeDir)
+	err := os.Mkdir(dirName, 0755)
 	if err == nil {
 		return nil
 	}
@@ -67,4 +66,53 @@ func ensureDir(dirName string) error {
 		return nil
 	}
 	return err
+}
+
+func readFile(filePath string) string {
+	// Declare file handle for the reading
+	var file io.Reader
+
+	if _, err := os.Stat(filePath); err == nil {
+		log.Println("Reading in file", filePath)
+
+		// Open our xmlFile
+		rawFile, err := os.Open(filePath)
+		if err != nil {
+			log.Println("Error in HTTP get request", err)
+			return ""
+		}
+
+		// Make sure the file is closed at the end of the function
+		defer rawFile.Close()
+		file = rawFile
+	} else if strings.HasPrefix(filePath, "http") {
+		resp, err := client.Get(filePath)
+		if err != nil {
+			log.Println("Error in HTTP get request", err)
+			return ""
+		}
+
+		defer resp.Body.Close()
+		file = resp.Body
+	} else if _, err := os.Stat(filePath); err == nil {
+		log.Println("Reading in file", filePath)
+
+		// Open our xmlFile
+		rawFile, err := os.Open(filePath)
+		if err != nil {
+			log.Println("Error opening file locally", err)
+			return ""
+		}
+
+		// Make sure the file is closed at the end of the function
+		defer rawFile.Close()
+		file = rawFile
+	} else {
+		log.Println("Unable to open file", filePath)
+		return ""
+	}
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(file)
+	return buf.String()
 }

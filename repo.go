@@ -1,4 +1,4 @@
-// Copyright 2019 Google LLC
+// Written by Paul Schou (paulschou.com) March 2022
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START functions_helloworld_get]
-
-// Package helloworld provides a set of Cloud Functions samples.
 package main
 
 import (
@@ -118,7 +115,7 @@ func readWithChecksum(fileName, checksum, checksumType string) *[]byte {
 		// Open our xmlFile
 		rawFile, err := os.Open(fileName)
 		if err != nil {
-			log.Println("Error in HTTP get request", err)
+			log.Println("Error in opening file locally", err)
 			return nil
 		}
 

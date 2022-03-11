@@ -74,6 +74,10 @@ Yum Get RepoMD,  Version: 0.1.20220310.1447
 
 Usage: ./yum-get-repomd [options...]
 
+  -insecure
+        Skip signature checks
+  -keyring string
+        Use keyring for verifying signature (default "keyring.gpg")
   -mirrors string
         Mirror / directory list of prefixes to use (default "mirrorlist.txt")
   -output string
