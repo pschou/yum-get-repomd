@@ -65,7 +65,7 @@ func main() {
 	trylist = append(trylist, mirrors...)
 
 	{
-		f, err := os.Create("repomd.xml")
+		f, err := os.Create(path.Join(*outputPath, "repomd.xml"))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -89,7 +89,7 @@ RepoMdFile:
 				//	continue
 				//}
 				_, file := path.Split(fileURL)
-				f, err := os.Create(file)
+				f, err := os.Create(path.Join(*outputPath, file))
 				if err != nil {
 					log.Fatal(err)
 				}
