@@ -80,7 +80,7 @@ Usage: ./yum-get-repomd [options...]
   -output string
         Path to put the repodata files (default ".")
   -repo string
-        Which package to get (default "/7/os/x86_64")
+        Repo path to use in fetching (default "/7/os/x86_64")
 ```
 
 

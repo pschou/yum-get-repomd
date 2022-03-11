@@ -31,7 +31,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	var inRepoPath = flag.String("repo", "/7/os/x86_64", "Which package to get")
+	var inRepoPath = flag.String("repo", "/7/os/x86_64", "Repo path to use in fetching")
 	var mirrorList = flag.String("mirrors", "mirrorlist.txt", "Mirror / directory list of prefixes to use")
 	var outputPath = flag.String("output", ".", "Path to put the repodata files")
 	flag.Parse()
