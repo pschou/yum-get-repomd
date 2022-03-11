@@ -128,7 +128,7 @@ func main() {
 							continue
 						}
 
-						fmt.Println("Verified!")
+						fmt.Println("GPG Verified!")
 					}
 					if latestRepomdTime != 0 {
 						log.Println("found newer")
