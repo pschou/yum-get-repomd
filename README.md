@@ -1,4 +1,4 @@
-# Yum Package Diff
+# Yum Get RepoMD
 
 This shim takes two yum primary.xml.gz files, in the order old then new for
 determining the files which have shown up or changed.  The intended purpose of this
