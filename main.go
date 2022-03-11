@@ -128,6 +128,7 @@ func main() {
 							continue
 						}
 
+						dat.ascFileContents = gpgFile
 						fmt.Println("GPG Verified!")
 					}
 					if latestRepomdTime != 0 {
@@ -147,13 +148,28 @@ func main() {
 	trylist := []string{latestRepomd.mirror}
 	trylist = append(trylist, mirrors...)
 
+	// Create the directory if needed
 	err := ensureDir(*outputPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Write out the repomd file into the path
 	{
 		f, err := os.Create(path.Join(*outputPath, "repomd.xml"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		_, err = f.Write(latestRepomd.fileContents)
+		if err != nil {
+			log.Fatal("Cannot write repomd.xml", err)
+		}
+	}
+
+	// If we have a signature file, write it out
+	if len(latestRepomd.ascFileContents) > 0 {
+		f, err := os.Create(path.Join(*outputPath, "repomd.xml.asc"))
 		if err != nil {
 			log.Fatal(err)
 		}

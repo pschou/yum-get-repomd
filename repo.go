@@ -53,9 +53,10 @@ type Repomd struct {
 		OpenSize        string `xml:"open-size"`
 		DatabaseVersion string `xml:"database_version"`
 	} `xml:"data"`
-	fileContents []byte
-	path         string
-	mirror       string
+	fileContents    []byte
+	ascFileContents string
+	path            string
+	mirror          string
 }
 
 var client = http.Client{
