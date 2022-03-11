@@ -5,10 +5,7 @@ signature and checksums of each file to ensure integrity.
 
 # Example usage:
 ```bash
-mkdir test
-cd test
-
-../yum-get-repomd -mirrors ../mirrorlist.txt -repo "/7/os/x86_64"
+../yum-get-repomd -mirrors ../mirrorlist.txt -repo "/7/os/x86_64" -output test
 ```
 
 and the output looks like:
