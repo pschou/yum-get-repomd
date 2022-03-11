@@ -1,4 +1,4 @@
-# Yum Get RepoMD
+# Yum Get Repo MetaData Utility
 
 This shim fetches a yum repomd from a given repo and mirror list.  It verifies the PGP
 signature and checksums of each file to ensure integrity.
