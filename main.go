@@ -50,11 +50,13 @@ func main() {
 		if dat != nil {
 			for _, elem := range dat.Data {
 				if elem.Timestamp > latestRepomdTime {
+					if latestRepomdTime != 0 {
+						log.Println("found newer")
+					}
 					dat.path = repoPath
 					dat.mirror = m
 					latestRepomd = *dat
 					latestRepomdTime = elem.Timestamp
-					log.Println("found newer")
 				}
 			}
 		}

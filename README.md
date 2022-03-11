@@ -16,7 +16,6 @@ and the output looks like:
 ```
 $ ../yum-get-repomd -mirrors ../mirrorlist.txt -repo "/7/os/x86_64"
 2022/03/10 15:14:23 0 Fetching http://mirror.umd.edu/centos/7/os/x86_64/repodata/repomd.xml
-2022/03/10 15:14:23 found newer
 2022/03/10 15:14:23 1 Fetching http://mirror.mia11.us.leaseweb.net/centos/7/os/x86_64/repodata/repomd.xml
 2022/03/10 15:14:23 2 Fetching http://mirrors.cmich.edu/centos/7/os/x86_64/repodata/repomd.xml
 2022/03/10 15:14:23 3 Fetching http://mirror.dal10.us.leaseweb.net/centos/7/os/x86_64/repodata/repomd.xml
