@@ -1,8 +1,7 @@
 # Yum Get RepoMD
 
-This shim takes two yum primary.xml.gz files, in the order old then new for
-determining the files which have shown up or changed.  The intended purpose of this
-shim is to be able to generate a file list for downloading.
+This shim fetches a yum repomd from a given repo and mirror list.  It verifies the PGP
+signature and checksums of each file to ensure integrity.
 
 # Example usage:
 ```bash
