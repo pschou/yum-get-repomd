@@ -21,6 +21,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -31,7 +32,8 @@ import (
 
 var version = "test"
 
-// HelloGet is an HTTP Cloud Function.
+// Main is a function to fetch the HTTP repodata from a URL to get the latest
+// package list for a repo
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Yum Get RepoMD,  Version: %s\n\nUsage: %s [options...]\n\n", version, os.Args[0])
@@ -42,7 +44,7 @@ func main() {
 	var mirrorList = flag.String("mirrors", "mirrorlist.txt", "Mirror / directory list of prefixes to use")
 	var outputPath = flag.String("output", ".", "Path to put the repodata files")
 	var insecure = flag.Bool("insecure", false, "Skip signature checks")
-	var keyringFile = flag.String("keyring", "keyring.gpg", "Use keyring for verifying signature")
+	var keyringFile = flag.String("keyring", "keys/", "Use keyring for verifying, keyring.gpg or keys/ directory")
 	flag.Parse()
 
 	mirrors := readMirrors(*mirrorList)
@@ -53,10 +55,27 @@ func main() {
 	var keyring openpgp.EntityList
 	if !*insecure {
 		var err error
-		gpgFile := readFile(*keyringFile)
-		keyring, err = loadKeys(gpgFile)
-		if err != nil {
-			log.Fatal("Error loading keyring file", err)
+		if _, ok := isDirectory(*keyringFile); ok {
+			//keyring = openpgp.EntityList{}
+			for _, file := range getFiles(*keyringFile, ".gpg") {
+				//fmt.Println("loading key", file)
+				gpgFile := readFile(file)
+				fileKeys, err := loadKeys(gpgFile)
+				if err != nil {
+					log.Fatal("Error loading keyring file", err)
+				}
+				//fmt.Println("  found", len(fileKeys), "keys")
+				keyring = append(keyring, fileKeys...)
+			}
+		} else {
+			gpgFile := readFile(*keyringFile)
+			keyring, err = loadKeys(gpgFile)
+			if err != nil {
+				log.Fatal("Error loading keyring file", err)
+			}
+		}
+		if len(keyring) == 0 {
+			log.Fatal("no keys loaded")
 		}
 	}
 
@@ -213,4 +232,33 @@ func check(e error) {
 		//panic(e)
 		log.Fatal(e)
 	}
+}
+
+// isDirectory determines if a file represented
+// by `path` is a directory or not
+func isDirectory(path string) (exist bool, isdir bool) {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return false, false
+	}
+	return true, fileInfo.IsDir()
+}
+
+func getFiles(walkdir, suffix string) []string {
+	ret := []string{}
+	err := filepath.Walk(walkdir,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+			if !info.IsDir() && strings.HasSuffix(path, suffix) {
+				ret = append(ret, path)
+			}
+			return nil
+		})
+	if err != nil {
+		log.Fatal(err)
+	}
+	return ret
 }
