@@ -80,9 +80,9 @@ func main() {
 	}
 
 	for i, m := range mirrors {
-		repoPath := m + "/" + repoPath + "/"
-		repomdPath := repoPath + "repodata/repomd.xml"
-		repomdPathGPG := repoPath + "repodata/repomd.xml.asc"
+		repoPathSlash := m + "/" + repoPath + "/"
+		repomdPath := repoPathSlash + "repodata/repomd.xml"
+		repomdPathGPG := repoPathSlash + "repodata/repomd.xml.asc"
 		log.Println(i, "Fetching", repomdPath)
 
 		dat := readRepomdFile(repomdPath)
@@ -154,7 +154,7 @@ func main() {
 						log.Println("found newer")
 					}
 					readFile(repomdPathGPG)
-					dat.path = repoPath
+					dat.path = repoPathSlash
 					dat.mirror = m
 					latestRepomd = *dat
 					latestRepomdTime = elem.Timestamp
