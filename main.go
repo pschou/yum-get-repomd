@@ -51,7 +51,7 @@ func main() {
 	repoPath := strings.TrimSuffix(strings.TrimPrefix(*inRepoPath, "/"), "/")
 
 	var latestRepomd Repomd
-	var latestRepomdTime int
+	var latestRepomdTime int64
 	var keyring openpgp.EntityList
 	if !*insecure {
 		var err error
@@ -175,12 +175,15 @@ func main() {
 
 	// Write out the repomd file into the path
 	{
-		f, err := os.Create(path.Join(*outputPath, "repomd.xml"))
+		outFile := path.Join(*outputPath, "repomd.xml")
+		f, err := os.Create(outFile)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer f.Close()
 		_, err = f.Write(latestRepomd.fileContents)
+		f.Close()
+		timestamp := time.Unix(latestRepomdTime, 0)
+		os.Chtimes(outFile, timestamp, timestamp)
 		if err != nil {
 			log.Fatal("Cannot write repomd.xml", err)
 		}
@@ -188,14 +191,17 @@ func main() {
 
 	// If we have a signature file, write it out
 	if len(latestRepomd.ascFileContents) > 0 {
-		f, err := os.Create(path.Join(*outputPath, "repomd.xml.asc"))
+		outFile := path.Join(*outputPath, "repomd.xml.asc")
+		f, err := os.Create(outFile)
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer f.Close()
 		_, err = f.Write(latestRepomd.fileContents)
+		f.Close()
+		timestamp := time.Unix(latestRepomdTime, 0)
+		os.Chtimes(outFile, timestamp, timestamp)
 		if err != nil {
-			log.Fatal("Cannot write repomd.xml", err)
+			log.Fatal("Cannot write repomd.xml.asc", err)
 		}
 	}
 
@@ -212,12 +218,16 @@ RepoMdFile:
 				//	continue
 				//}
 				_, file := path.Split(fileURL)
-				f, err := os.Create(path.Join(*outputPath, file))
+				outFile := path.Join(*outputPath, file)
+				f, err := os.Create(outFile)
 				if err != nil {
 					log.Fatal(err)
 				}
-				defer f.Close()
 				_, err = f.Write(*fileData)
+				f.Close()
+				timestamp := time.Unix(filePath.Timestamp, 0)
+				os.Chtimes(outFile, timestamp, timestamp)
+
 				if err == nil {
 					continue RepoMdFile
 				}
