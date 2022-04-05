@@ -144,7 +144,6 @@ func main() {
 						}
 						if len(keys) > 1 {
 							fmt.Println("warning: More than one public key found matching KeyID")
-							continue
 						}
 
 						dat.ascFileContents = gpgFile
