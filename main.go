@@ -196,7 +196,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		_, err = f.Write(latestRepomd.fileContents)
+		_, err = f.Write([]byte(latestRepomd.ascFileContents))
 		f.Close()
 		timestamp := time.Unix(latestRepomdTime, 0)
 		os.Chtimes(outFile, timestamp, timestamp)
