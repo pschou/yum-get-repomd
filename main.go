@@ -169,7 +169,7 @@ func main() {
 	// Create the directory if needed
 	err := ensureDir(*outputPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Cannot create output path:", err)
 	}
 
 	// Write out the repomd file into the path
@@ -177,7 +177,7 @@ func main() {
 		outFile := path.Join(*outputPath, "repomd.xml")
 		f, err := os.Create(outFile)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error creating xml file", err)
 		}
 		_, err = f.Write(latestRepomd.fileContents)
 		f.Close()
@@ -193,7 +193,7 @@ func main() {
 		outFile := path.Join(*outputPath, "repomd.xml.asc")
 		f, err := os.Create(outFile)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error creating xml asc file", err)
 		}
 		_, err = f.Write([]byte(latestRepomd.ascFileContents))
 		f.Close()
