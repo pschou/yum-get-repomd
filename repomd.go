@@ -16,9 +16,12 @@ package main
 
 import (
 	"bytes"
+	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/xml"
 	"fmt"
+	"hash"
 	"io"
 	"log"
 	"net/http"
@@ -68,7 +71,9 @@ func readRepomdFile(repomdFile string) *Repomd {
 	var file io.Reader
 
 	if _, err := os.Stat(repomdFile); err == nil {
-		log.Println("Reading in file", repomdFile)
+		if *debug {
+			log.Println("Reading in file", repomdFile)
+		}
 
 		// Open our xmlFile
 		rawFile, err := os.Open(repomdFile)
@@ -89,6 +94,8 @@ func readRepomdFile(repomdFile string) *Repomd {
 
 		defer resp.Body.Close()
 		file = resp.Body
+	} else {
+		return nil
 	}
 
 	buf := new(bytes.Buffer)
@@ -111,7 +118,7 @@ func readWithChecksum(fileName, checksum, checksumType string) *[]byte {
 	var file io.Reader
 
 	if _, err := os.Stat(fileName); err == nil {
-		log.Println("Reading in file", fileName)
+		//log.Println("Reading in file", fileName)
 
 		// Open our xmlFile
 		rawFile, err := os.Open(fileName)
@@ -140,12 +147,67 @@ func readWithChecksum(fileName, checksum, checksumType string) *[]byte {
 	var sum string
 
 	switch checksumType {
+	case "sha1":
+		sum = fmt.Sprintf("%x", sha1.Sum(contents))
 	case "sha256":
 		sum = fmt.Sprintf("%x", sha256.Sum256(contents))
+	case "sha384":
+		sum = fmt.Sprintf("%x", sha512.Sum384(contents))
+	case "sha512":
+		sum = fmt.Sprintf("%x", sha512.Sum512(contents))
 	}
 
 	if sum == checksum {
 		return &contents
 	}
 	return nil
+}
+
+func checkWithChecksum(fileName, checksum, checksumType string) bool {
+	// Declare file handle for the reading
+	var file io.Reader
+
+	var fileHasher hash.Hash
+	switch checksumType {
+	case "sha1":
+		fileHasher = sha1.New()
+	case "sha256":
+		fileHasher = sha256.New()
+	case "sha384":
+		fileHasher = sha512.New384()
+	case "sha512":
+		fileHasher = sha512.New()
+	}
+
+	if _, err := os.Stat(fileName); err == nil {
+		//log.Println("Reading in file", fileName)
+
+		// Open our xmlFile
+		rawFile, err := os.Open(fileName)
+		if err != nil {
+			log.Println("Error in opening file locally", err)
+			return false
+		}
+
+		// Make sure the file is closed at the end of the function
+		defer rawFile.Close()
+		file = rawFile
+	} else if strings.HasPrefix(fileName, "http") {
+		resp, err := client.Get(fileName)
+		if err != nil {
+			log.Println("Error in HTTP get request", err)
+			return false
+		}
+
+		defer resp.Body.Close()
+		file = resp.Body
+	}
+
+	io.Copy(fileHasher, file)
+	sum := fmt.Sprintf("%x", fileHasher.Sum(nil))
+
+	if sum == checksum {
+		return true
+	}
+	return false
 }
