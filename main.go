@@ -152,7 +152,6 @@ func main() {
 					if latestRepomdTime != 0 {
 						log.Println("found newer")
 					}
-					readFile(repomdPathGPG)
 					dat.path = repoPathSlash
 					dat.mirror = m
 					latestRepomd = *dat
