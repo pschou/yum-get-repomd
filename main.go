@@ -53,7 +53,7 @@ func main() {
 	repoPath := strings.TrimSuffix(strings.TrimPrefix(*inRepoPath, "/"), "/")
 
 	var latestRepomd Repomd
-	var latestRepomdTime int64
+	var latestRepomdTime float64
 	var keyring openpgp.EntityList
 	if !*insecure {
 		var err error
@@ -182,7 +182,7 @@ func main() {
 		}
 		_, err = f.Write(latestRepomd.fileContents)
 		f.Close()
-		timestamp := time.Unix(latestRepomdTime, 0)
+		timestamp := time.Unix(int64(latestRepomdTime), 0)
 		os.Chtimes(outFile, timestamp, timestamp)
 		if err != nil {
 			log.Fatal("Cannot write repomd.xml", err)
@@ -198,7 +198,7 @@ func main() {
 		}
 		_, err = f.Write([]byte(latestRepomd.ascFileContents))
 		f.Close()
-		timestamp := time.Unix(latestRepomdTime, 0)
+		timestamp := time.Unix(int64(latestRepomdTime), 0)
 		os.Chtimes(outFile, timestamp, timestamp)
 		if err != nil {
 			log.Fatal("Cannot write repomd.xml.asc", err)
@@ -225,7 +225,7 @@ RepoMdFile:
 				}
 				_, err = f.Write(*fileData)
 				f.Close()
-				timestamp := time.Unix(filePath.Timestamp, 0)
+				timestamp := time.Unix(int64(filePath.Timestamp), 0)
 				os.Chtimes(outFile, timestamp, timestamp)
 
 				if err == nil {
