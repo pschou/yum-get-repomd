@@ -1,0 +1,14 @@
+http://mirror.umd.edu/fedora/epel/
+http://mirror.math.princeton.edu/pub/epel/
+https://da.mirrors.kernel.org/fedora-epel/
+http://mirrors.upr.edu/epel/
+http://ftp.cse.buffalo.edu/pub/epel/
+http://mirror.arizona.edu/fedora-epel/
+http://mirror.coastal.edu/epel/
+http://mirror.siena.edu/epel/
+http://mirror.grid.uchicago.edu/pub/linux/epel/
+http://ftp-nyc.osuosl.org/pub/fedora-epel/
+http://mirrors.wcupa.edu/epel/
+http://mirror.pit.teraswitch.com/fedora/epel/
+http://mirrors.sonic.net/epel/
+http://packages.oit.ncsu.edu/epel/
