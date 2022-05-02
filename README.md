@@ -5,7 +5,7 @@ signature and checksums of each file to ensure integrity.
 
 # Example usage:
 ```bash
-./yum-get-repomd -mirrors mirrorlist.txt -repo "/7/os/x86_64" -keyring keys/ -output test
+./yum-get-repomd -mirrors mirrorlist_centos.txt -repo "/7/os/x86_64" -keyring keys/ -output test
 ```
 
 and the output looks like:
@@ -64,6 +64,11 @@ d6d94c7d406fe7ad4902a97104b39a0d8299451832a97f31d71653ba982c955b-filelists.sqlit
 ecaab5cc3b9c10fefe6be2ecbf6f9fcb437231dac3e82cab8d9d2cf70e99644d-other.sqlite.bz2
 repomd.xml
 repomd.xml.asc
+```
+
+# Example Puppet
+```bash
+$ yum-get-repomd -mirrors mirrorlist_puppet.txt -repo el/7/x86_64 -output puppet -keyring keys/
 ```
 
 
