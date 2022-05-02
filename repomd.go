@@ -147,7 +147,7 @@ func readWithChecksum(fileName, checksum, checksumType string) *[]byte {
 	var sum string
 
 	switch checksumType {
-	case "sha":
+	case "sha", "sha1":
 		sum = fmt.Sprintf("%x", sha1.Sum(contents))
 	case "sha256":
 		sum = fmt.Sprintf("%x", sha256.Sum256(contents))
@@ -169,7 +169,7 @@ func checkWithChecksum(fileName, checksum, checksumType string) bool {
 
 	var fileHasher hash.Hash
 	switch checksumType {
-	case "sha":
+	case "sha", "sha1":
 		fileHasher = sha1.New()
 	case "sha256":
 		fileHasher = sha256.New()
