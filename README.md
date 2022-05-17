@@ -70,7 +70,10 @@ repomd.xml.asc
 ```bash
 $ yum-get-repomd -mirrors mirrorlist_puppet.txt -repo el/7/x86_64 -output puppet -keyring keys/
 ```
-
+# Example Microsoft
+```bash
+./yum-get-repomd -mirrors mirrorlist_microsoft.txt -repo "7/prod" -keyring keys/ -output microsoft
+```
 
 # Usage help:
 ```bash
