@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -40,6 +41,9 @@ func readMirrors(mirrorFile string) []string {
 			continue
 		}
 		line = strings.TrimSuffix(line, "/")
+		if *debug {
+			fmt.Println("mirror:", line)
+		}
 		ret = append(ret, line)
 	}
 

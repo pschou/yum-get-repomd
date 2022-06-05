@@ -66,6 +66,11 @@ repomd.xml
 repomd.xml.asc
 ```
 
+# Example Salt
+```bash
+$ ./yum-get-repomd -mirrors mirrorlist_salt.txt -repo  7/x86_64/latest/ -output salt-test -insecure -debug
+```
+
 # Example Puppet
 ```bash
 $ yum-get-repomd -mirrors mirrorlist_puppet.txt -repo el/7/x86_64 -output puppet -keyring keys/

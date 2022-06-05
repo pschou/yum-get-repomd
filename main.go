@@ -88,10 +88,9 @@ func main() {
 	for j, mm := range mirrors {
 		i := j
 		m := mm
-		time.Sleep(70 * time.Millisecond)
 
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 			repoPathSlash := m + "/" + repoPath + "/"
 			repomdPath := repoPathSlash + "repodata/repomd.xml"
@@ -175,6 +174,7 @@ func main() {
 				}
 			}
 		}()
+		time.Sleep(70 * time.Millisecond)
 	}
 	wg.Wait()
 

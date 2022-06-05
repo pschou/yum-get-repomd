@@ -1,2 +1,2 @@
 https://packages.microsoft.com/rhel/
-https://packages.microsoft.com/rhel/
+http://packages.microsoft.com/rhel/
