@@ -109,7 +109,7 @@ func main() {
 							gpgFile := readFile(repomdPathGPG)
 							signature_block, err := armor.Decode(strings.NewReader(gpgFile))
 							if err != nil {
-								log.Println("Unable decode signature")
+								log.Println("Signature file missing or unable to decode signature, maybe try with '-insecure' flag?")
 								continue
 							}
 							p, err := packet.Read(signature_block.Body)
