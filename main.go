@@ -46,10 +46,12 @@ func main() {
 	var mirrorList = flag.String("mirrors", "mirrorlist.txt", "Mirror / directory list of prefixes to use")
 	var outputPath = flag.String("output", ".", "Path to put the repodata files")
 	var insecure = flag.Bool("insecure", false, "Skip signature checks")
+	var timeout = flag.Duration("timeout", 5*time.Second, "HTTP Client Timeout")
 	var keyringFile = flag.String("keyring", "keys/", "Use keyring for verifying, keyring.gpg or keys/ directory")
 	debug = flag.Bool("debug", false, "Turn on debug, more verbose")
 	flag.Parse()
 
+	client.Timeout = *timeout
 	mirrors := readMirrors(*mirrorList)
 	repoPath := strings.TrimSuffix(strings.TrimPrefix(*inRepoPath, "/"), "/")
 
