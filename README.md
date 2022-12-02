@@ -83,7 +83,7 @@ $ yum-get-repomd -mirrors mirrorlist_puppet.txt -repo el/7/x86_64 -output puppet
 # Usage help:
 ```bash
 $ ./yum-get-repomd -h
-Yum Get RepoMD,  Version: 0.1.20220323.0913
+Yum Get RepoMD,  Version: 0.1.2...
 
 Usage: ./yum-get-repomd [options...]
 
@@ -97,6 +97,8 @@ Usage: ./yum-get-repomd [options...]
         Path to put the repodata files (default ".")
   -repo string
         Repo path to use in fetching (default "/7/os/x86_64")
+  -timeout duration
+        HTTP Client Timeout (default 5s)
 ```
 
 
