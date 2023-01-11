@@ -109,6 +109,11 @@ func readRepomdFile(repomdFile string) *Repomd {
 		return nil
 	}
 	dat.fileContents = contents
+	for i, d := range dat.Data {
+		if d.Timestamp > 1e15 {
+			dat.Data[i].Timestamp = d.Timestamp / 1e6
+		}
+	}
 
 	return &dat
 }

@@ -105,7 +105,10 @@ func main() {
 			if dat != nil {
 				for _, elem := range dat.Data {
 					if elem.Timestamp > latestRepomdTime {
-						if !*insecure {
+						if *insecure {
+							//fmt.Printf("elem: %#v\n", elem.Timestamp)
+							latestRepomdTime = elem.Timestamp
+						} else {
 							// Verify gpg signature file
 							log.Println("Fetching signature file:", repomdPathGPG)
 							gpgFile := readFile(repomdPathGPG)
@@ -200,6 +203,7 @@ func main() {
 		_, err = f.Write(latestRepomd.fileContents)
 		f.Close()
 		timestamp := time.Unix(int64(latestRepomdTime), 0)
+		//fmt.Printf("ts: %s\n", timestamp)
 		os.Chtimes(outFile, timestamp, timestamp)
 		if err != nil {
 			log.Fatal("Cannot write repomd.xml", err)
