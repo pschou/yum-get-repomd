@@ -15,9 +15,11 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"hash"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -113,13 +115,19 @@ func main() {
 							log.Println("Fetching signature file:", repomdPathGPG)
 							gpgFile := readFile(repomdPathGPG)
 							signature_block, err := armor.Decode(strings.NewReader(gpgFile))
+							if len(gpgFile) > 100 && err == io.EOF {
+								// This file may not be armored / encoded, go ahead and try the raw version
+								signature_block = &armor.Block{Body: bytes.NewReader([]byte(gpgFile))}
+								err = nil
+							}
 							if err != nil {
+								//log.Println("Error decoding armored asc file:", err)
 								log.Println("Signature file missing or unable to decode signature, maybe try with '-insecure' flag?")
 								continue
 							}
 							p, err := packet.Read(signature_block.Body)
 							if err != nil {
-								log.Println("Unable parse signature")
+								log.Println("Unable parse signature file")
 								continue
 							}
 							var signed_at time.Time
