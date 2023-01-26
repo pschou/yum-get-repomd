@@ -83,10 +83,20 @@ $ yum-get-repomd -mirrors mirrorlist_puppet.txt -repo el/7/x86_64 -output puppet
 # Usage help:
 ```bash
 $ ./yum-get-repomd -h
-Yum Get RepoMD,  Version: 0.1.2...
+Yum Get RepoMD
 
 Usage: ./yum-get-repomd [options...]
 
+  -client-cert string
+        Satellite repo, CERT for using PKI auth
+  -client-key string
+        Satellite repo, KEY for using PKI auth
+  -client-pass string
+        Satellite repo, PASS for USER
+  -client-user string
+        Satellite repo, using basic USER auth
+  -debug
+        Turn on debug, more verbose
   -insecure
         Skip signature checks
   -keyring string
@@ -100,7 +110,3 @@ Usage: ./yum-get-repomd [options...]
   -timeout duration
         HTTP Client Timeout (default 5s)
 ```
-
-
-
-

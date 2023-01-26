@@ -27,7 +27,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 )
 
 type Repomd struct {
@@ -62,10 +61,6 @@ type Repomd struct {
 	mirror          string
 }
 
-var client = http.Client{
-	Timeout: 5 * time.Second,
-}
-
 func readRepomdFile(repomdFile string) *Repomd {
 	// Declare file handle for the reading
 	var file io.Reader
@@ -86,7 +81,7 @@ func readRepomdFile(repomdFile string) *Repomd {
 		defer rawFile.Close()
 		file = rawFile
 	} else if strings.HasPrefix(repomdFile, "http") {
-		resp, err := client.Get(repomdFile)
+		resp, err := http.DefaultClient.Get(repomdFile)
 		if err != nil {
 			log.Println("Error in HTTP get request", err)
 			return nil
@@ -136,7 +131,7 @@ func readWithChecksum(fileName, checksum, checksumType string) *[]byte {
 		defer rawFile.Close()
 		file = rawFile
 	} else if strings.HasPrefix(fileName, "http") {
-		resp, err := client.Get(fileName)
+		resp, err := http.DefaultClient.Get(fileName)
 		if err != nil {
 			log.Println("Error in HTTP get request", err)
 			return nil
@@ -198,7 +193,7 @@ func checkWithChecksum(fileName, checksum, checksumType string) bool {
 		defer rawFile.Close()
 		file = rawFile
 	} else if strings.HasPrefix(fileName, "http") {
-		resp, err := client.Get(fileName)
+		resp, err := http.DefaultClient.Get(fileName)
 		if err != nil {
 			log.Println("Error in HTTP get request", err)
 			return false

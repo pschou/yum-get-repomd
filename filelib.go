@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -90,7 +91,7 @@ func readFile(filePath string) string {
 		defer rawFile.Close()
 		file = rawFile
 	} else if strings.HasPrefix(filePath, "http") {
-		resp, err := client.Get(filePath)
+		resp, err := http.DefaultClient.Get(filePath)
 		if err != nil {
 			log.Println("Error in HTTP get request", err)
 			return ""

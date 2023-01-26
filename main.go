@@ -16,11 +16,14 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"hash"
 	"io"
 	"log"
+	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -47,13 +50,25 @@ func main() {
 	var inRepoPath = flag.String("repo", "/7/os/x86_64", "Repo path to use in fetching")
 	var mirrorList = flag.String("mirrors", "mirrorlist.txt", "Mirror / directory list of prefixes to use")
 	var outputPath = flag.String("output", ".", "Path to put the repodata files")
+	var secureCert = flag.String("client-cert", "", "Satellite repo, CERT for using PKI auth")
+	var secureKey = flag.String("client-key", "", "Satellite repo, KEY for using PKI auth")
+	var secureUser = flag.String("client-user", "", "Satellite repo, using basic USER auth")
+	var securePass = flag.String("client-pass", "", "Satellite repo, PASS for USER")
 	var insecure = flag.Bool("insecure", false, "Skip signature checks")
 	var timeout = flag.Duration("timeout", 5*time.Second, "HTTP Client Timeout")
 	var keyringFile = flag.String("keyring", "keys/", "Use keyring for verifying, keyring.gpg or keys/ directory")
 	debug = flag.Bool("debug", false, "Turn on debug, more verbose")
 	flag.Parse()
 
-	client.Timeout = *timeout
+	http.DefaultClient.Timeout = *timeout
+	if *secureCert != "" {
+		if cert, err := tls.LoadX509KeyPair(*secureCert, *secureKey); err != nil {
+			log.Fatal(err)
+		} else {
+			http.DefaultClient.Transport = &http.Transport{TLSClientConfig: &tls.Config{Certificates: []tls.Certificate{cert}}}
+		}
+	}
+
 	mirrors := readMirrors(*mirrorList)
 	repoPath := strings.TrimSuffix(strings.TrimPrefix(*inRepoPath, "/"), "/")
 
@@ -201,6 +216,10 @@ func main() {
 		log.Fatal("Cannot create output path:", err)
 	}
 
+	if len(latestRepomd.fileContents) == 0 {
+		os.Exit(1)
+	}
+
 	// Write out the repomd file into the path
 	{
 		outFile := path.Join(*outputPath, "repomd.xml")
@@ -237,16 +256,20 @@ func main() {
 RepoMdFile:
 	for _, filePath := range latestRepomd.Data {
 		for _, tryMirror := range trylist {
-			fileURL := tryMirror + "/" + repoPath + "/" + strings.TrimPrefix(filePath.Location.Href, "/")
-			fmt.Println("getting", fileURL)
-			fileData := readWithChecksum(fileURL, filePath.Checksum.Text, filePath.Checksum.Type)
+			u, err := url.Parse(tryMirror)
+			if err != nil {
+				continue
+			}
+			u.Path = strings.TrimSuffix(u.Path, "/") + "/" + repoPath + "/" + strings.TrimPrefix(filePath.Location.Href, "/")
+			if *secureUser != "" {
+				u.User = url.UserPassword(*secureUser, *securePass)
+			}
+
+			//fileURL := tryMirror + "/" + repoPath + "/" + strings.TrimPrefix(filePath.Location.Href, "/")
+			fmt.Println("getting", u.Redacted())
+			fileData := readWithChecksum(u.String(), filePath.Checksum.Text, filePath.Checksum.Type)
 			if fileData != nil {
-				//fmt.Println("length", len(*fileData))
-				//u, err := url.Parse(fileURL)
-				//if err != nil {
-				//	continue
-				//}
-				_, file := path.Split(fileURL)
+				_, file := path.Split(u.Path)
 				outFile := path.Join(*outputPath, file)
 				f, err := os.Create(outFile)
 				if err != nil {
